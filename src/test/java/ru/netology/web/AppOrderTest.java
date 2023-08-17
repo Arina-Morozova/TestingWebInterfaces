@@ -39,13 +39,13 @@ public class AppOrderTest {
 
     @Test
     void shouldTest() {
-        WebElement form = driver.findElement(By.className("form"));
-        form.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
-        form.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
-        form.findElement(By.cssSelector("[data-test-id=agreement]")).click();
-        form.findElement(By.className("button")).click();
-        String text = form.findElement(By.cssSelector("[data-test-id=order-success")).getText();
-        assertEquals("  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", text.trim());
+
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=order-success")).getText();
+        assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", text.trim());
 
     }
 }
