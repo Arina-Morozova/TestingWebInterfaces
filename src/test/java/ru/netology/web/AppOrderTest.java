@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -38,14 +37,89 @@ public class AppOrderTest {
     }
 
     @Test
-    void shouldTest() {
-
+    void shouldTestIfSuccess() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.className("button")).click();
-        String text = driver.findElement(By.cssSelector("[data-test-id=order-success")).getText();
+        String text = driver.findElement(By.cssSelector("[data-test-id=order-success]")).getText();
         assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", text.trim());
+    }
 
+    @Test
+    void shouldTestIfFailedByEmptyName() {
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=name].input_invalid .input__sub")).getText();
+        assertEquals("Поле обязательно для заполнения", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByEnglishName() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Morozova Arina");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=name].input_invalid .input__sub")).getText();
+        assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByNameWithOtherSymbols() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина1.");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=name].input_invalid .input__sub")).getText();
+        assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByEmptyPhone() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=phone].input_invalid .input__sub")).getText();
+        assertEquals("Поле обязательно для заполнения", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByPhoneWithLetters() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=phone].input_invalid .input__sub")).getText();
+        assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByPhoneLessThan11Numbers() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+712345678");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=phone].input_invalid .input__sub")).getText();
+        assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByPhoneMoreThan11Numbers() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+7123456789056");
+        driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=phone].input_invalid .input__sub")).getText();
+        assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.", text.trim());
+    }
+
+    @Test
+    void shouldTestIfFailedByCheckbox() {
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Морозова Арина");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
+        driver.findElement(By.className("button")).click();
+        String text = driver.findElement(By.cssSelector("[data-test-id=agreement].input_invalid .checkbox__text")).getText();
+        assertEquals("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй", text.trim());
     }
 }
